@@ -7,6 +7,20 @@ on:
       - develop
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Build target (prod o dev)'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+          - dev
+      tags:
+        description: 'Tags a publicar (separados por coma, ej: latest,latest-stable,1.0.3)'
+        required: true
+        default: 'latest,latest-stable'
 
 env:
   IMAGE: tinouy/geso-backend
@@ -36,7 +50,16 @@ jobs:
         run: |
           IMAGE="${{ env.IMAGE }}"
 
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TARGET="${{ inputs.target }}"
+            {
+              echo "tags<<EOF"
+              echo "${{ inputs.tags }}" | tr ',' '\n' | sed "s|^|${IMAGE}:|"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            echo "target=${TARGET}" >> "$GITHUB_OUTPUT"
+
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             NEW_TAG="${GITHUB_REF#refs/tags/}"
 
             LATEST_VER=$(curl -sf "https://hub.docker.com/v2/repositories/${IMAGE}/tags?page_size=100" \
