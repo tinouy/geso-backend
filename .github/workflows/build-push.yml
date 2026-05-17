@@ -52,6 +52,7 @@ jobs:
           INPUT_IMAGE_TAGS: ${{ inputs.image_tags }}
           INPUT_TARGET: ${{ inputs.target }}
         run: |
+          set -e
           IMAGE="${{ env.IMAGE }}"
 
           if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
@@ -65,18 +66,17 @@ jobs:
 
           elif [[ "$GIT_REF" == refs/tags/* ]]; then
             NEW_TAG="${GIT_REF#refs/tags/}"
+
             LATEST_VER=$(curl -sf "https://hub.docker.com/v2/repositories/${IMAGE}/tags?page_size=100" \
-              | python3 -c "
-import sys, json, re
-data = json.load(sys.stdin)
-tags = [t['name'] for t in data.get('results', []) if re.match(r'^\d+\.\d+\.\d+$', t['name'])]
-print(max(tags, key=lambda v: tuple(int(x) for x in v.split('.'))) if tags else '0.0.0')
-" || echo "0.0.0")
-            IS_NEWER=$(python3 -c "
-new=tuple(int(x) for x in '${NEW_TAG}'.split('.'))
-cur=tuple(int(x) for x in '${LATEST_VER}'.split('.'))
-print('true' if new > cur else 'false')
-")
+              | jq -r '[.results[].name | select(test("^[0-9]+[.][0-9]+[.][0-9]+$"))] | sort_by(split(".") | map(tonumber)) | last // "0.0.0"' \
+              || echo "0.0.0")
+
+            if [ "$NEW_TAG" != "$LATEST_VER" ] && printf '%s\n%s\n' "$LATEST_VER" "$NEW_TAG" | sort -V -C; then
+              IS_NEWER="true"
+            else
+              IS_NEWER="false"
+            fi
+
             if [ "$IS_NEWER" = "true" ]; then
               { echo "tags<<EOF"; echo "${IMAGE}:${NEW_TAG}"; echo "${IMAGE}:latest"; echo "${IMAGE}:latest-stable"; echo "EOF"; } >> "$GITHUB_OUTPUT"
             else
