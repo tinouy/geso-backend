@@ -9,18 +9,18 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
     inputs:
+      image_tags:
+        description: 'Tags a publicar separados por coma (ej: latest,latest-stable,1.0.3)'
+        required: true
+        default: 'latest,latest-stable'
       target:
-        description: 'Build target (prod o dev)'
+        description: 'Build target'
         required: true
         default: 'prod'
         type: choice
         options:
           - prod
           - dev
-      tags:
-        description: 'Tags a publicar (separados por coma, ej: latest,latest-stable,1.0.3)'
-        required: true
-        default: 'latest,latest-stable'
 
 env:
   IMAGE: tinouy/geso-backend
@@ -54,7 +54,7 @@ jobs:
             TARGET="${{ inputs.target }}"
             {
               echo "tags<<EOF"
-              echo "${{ inputs.tags }}" | tr ',' '\n' | sed "s|^|${IMAGE}:|"
+              echo "${{ inputs.image_tags }}" | tr ',' '\n' | sed "s|^|${IMAGE}:|"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
             echo "target=${TARGET}" >> "$GITHUB_OUTPUT"
