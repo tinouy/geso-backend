@@ -1,0 +1,25 @@
+[DATABASE]
+url=sqlite:////app/data/geso.db
+
+[SECURITY]
+secret_key=tu-clave-secreta-super-segura-cambiar-en-produccion-123456789
+algorithm=HS256
+access_token_expire_minutes=30
+
+[CLUB]
+name=Club de Cervezas Artesanales
+frontend_url=http://localhost:3000
+
+[ANNUAL_FEE]
+amount=3000
+period_type=yearly
+prorrate_type=monthly
+
+[ADMIN]
+username=admin
+email=admin@clubcervezas.com
+password=Admin123!
+
+[WIZARD]
+# Desactivar el wizard de inicialización (true/false o cualquier valor para desactivar)
+disable_wizard=${DISABLE_WIZARD}

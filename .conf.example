@@ -1,0 +1,52 @@
+[DATABASE]
+# URL de conexión a la base de datos
+# Ejemplos:
+# SQLite: sqlite:////app/data/geso.db
+# PostgreSQL: postgresql://user:password@localhost/dbname
+url=${DATABASE_URL}
+
+[SECURITY]
+# Clave secreta para JWT (cambiar en producción)
+# Ejemplo: tu-clave-secreta-super-segura-cambiar-en-produccion-123456789
+secret_key=${SECRET_KEY}
+# Algoritmo de encriptación JWT (HS256 o RS256)
+algorithm=${ALGORITHM}
+# Tiempo de expiración del token en minutos
+access_token_expire_minutes=${ACCESS_TOKEN_EXPIRE_MINUTES}
+
+[CLUB]
+# Nombre del club
+# Ejemplo: Club de Cervezas Artesanales
+name=${CLUB_NAME}
+# URL del frontend
+# Ejemplo: http://localhost:3000
+frontend_url=${FRONTEND_URL}
+
+[ANNUAL_FEE]
+# Monto de la cuota anual en pesos
+# Ejemplo: 3000
+amount=${ANNUAL_FEE_AMOUNT}
+# Tipo de período: yearly o december_to_december
+# Ejemplo: yearly
+period_type=${PERIOD_TYPE}
+# Tipo de prorrateo: monthly, bimonthly, quarterly, fourmonthly
+# Ejemplo: monthly
+prorrate_type=${PRORRATE_TYPE}
+
+[ADMIN]
+# Usuario administrador por defecto (usado durante inicialización)
+# Ejemplo: admin
+username=${ADMIN_USERNAME}
+# Email del administrador por defecto
+# Ejemplo: admin@clubcervezas.com
+email=${ADMIN_EMAIL}
+# Contraseña del administrador por defecto (cambiar en producción)
+# Ejemplo: Admin123!
+password=${ADMIN_PASSWORD}
+
+[WIZARD]
+# Desactivar el wizard de inicialización (cualquier valor desactiva el wizard)
+# Ejemplo: true
+# Si no se configura, el wizard se desactiva automáticamente si hay usuarios en la BD
+disable_wizard=${DISABLE_WIZARD}
+
