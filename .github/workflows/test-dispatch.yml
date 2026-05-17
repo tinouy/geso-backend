@@ -1,10 +1,28 @@
-name: Test Dispatch
+name: Test Dispatch 2
 
 on:
+  push:
+    branches:
+      - main
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
+    inputs:
+      image_tags:
+        description: 'Tags separados por coma'
+        required: true
+        default: 'latest,latest-stable'
+      target:
+        description: 'Build target'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+          - dev
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "funciona"
+      - run: echo "funciona con inputs"
